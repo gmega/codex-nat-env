@@ -1,0 +1,63 @@
+services:
+  # nat_codex_1:
+  #   build: ./codex
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     private_network_1:
+  #       ipv4_address: ${CODEX_1_PRIVATE_ADDR}
+
+  # nat_router_1:
+  #   build: ./router
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     private_network_1:
+  #       ipv4_address: ${NAT_ROUTER_1_PRIVATE_ADDR}
+  #     public_internet:
+  #       ipv4_address: ${NAT_ROUTER_1_PUBLIC_ADDR}
+
+  # nat_codex_2:
+  #   build: ./codex
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     private_network_2:
+  #       ipv4_address: ${CODEX_2_PRIVATE_ADDR}
+
+  # nat_router_2:
+  #   build: ./router
+  #   cap_add:
+  #     - NET_ADMIN
+  #   networks:
+  #     private_network_2:
+  #       ipv4_address: ${NAT_ROUTER_2_PRIVATE_ADDR}
+  #     public_internet:
+  #       ipv4_address: ${NAT_ROUTER_2_PUBLIC_ADDR}
+
+  public_codex:
+    build: 
+      context: ./codex
+      args:
+        - CODEX_BINARY=${CODEX_BINARY}
+    networks:
+      public_internet:
+        ipv4_address: ${PUBLIC_CODEX_ADDR}
+
+networks:
+  public_internet:
+    ipam:
+      config:
+        - subnet: ${PUBLIC_SUBNET}
+
+  private_network_1:
+    ipam:
+      config:
+        - subnet: ${PRIVATE_SUBNET_1}
+
+  private_network_2:
+    ipam:
+      # Ideally we would use the same subnetwork as private_network_1
+      # but turns out this is not supported by default.
+      config:
+        - subnet: ${PRIVATE_SUBNET_2}

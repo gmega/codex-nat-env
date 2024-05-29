@@ -23,7 +23,7 @@ services:
       - NET_ADMIN
     environment:
       - GATEWAY=${NAT_ROUTER_2_PRIVATE_ADDR}
-      - BOOTSTRAP_NODE=${PUBLIC_CODEX_ADDR}
+      - BOOTSTRAP_NODE_ADDR=${PUBLIC_CODEX_ADDR}
     volumes:
       - ./logs/nat-codex-2:/opt/codex/logs
     networks:

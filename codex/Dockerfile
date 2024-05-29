@@ -5,7 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG CODEX_BINARY
 
 RUN apt-get update && apt-get -y install iproute2 iptables ulogd2\
-  tcpdump iputils-ping libgomp1 curl jq
+  netcat tcpdump iputils-ping libgomp1 curl jq
 
 RUN mkdir /opt/codex
 

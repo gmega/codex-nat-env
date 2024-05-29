@@ -17,29 +17,46 @@ services:
   #     public_internet:
   #       ipv4_address: ${NAT_ROUTER_1_PUBLIC_ADDR}
 
-  # nat_codex_2:
-  #   build: ./codex
-  #   cap_add:
-  #     - NET_ADMIN
-  #   networks:
-  #     private_network_2:
-  #       ipv4_address: ${CODEX_2_PRIVATE_ADDR}
+  nat_codex_2:
+    build: ./codex
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - GATEWAY=${NAT_ROUTER_2_PRIVATE_ADDR}
+      - BOOTSTRAP_NODE=${PUBLIC_CODEX_ADDR}
+    volumes:
+      - ./logs/nat-codex-2:/opt/codex/logs
+    networks:
+      private_network_2:
+        ipv4_address: ${NAT_CODEX_2_ADDR}
+    depends_on:
+      public_codex:
+        condition: service_healthy
 
-  # nat_router_2:
-  #   build: ./router
-  #   cap_add:
-  #     - NET_ADMIN
-  #   networks:
-  #     private_network_2:
-  #       ipv4_address: ${NAT_ROUTER_2_PRIVATE_ADDR}
-  #     public_internet:
-  #       ipv4_address: ${NAT_ROUTER_2_PUBLIC_ADDR}
+  nat_router_2:
+    build: ./router
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - INTERNAL_SUBNET=${PRIVATE_SUBNET_2}
+      - EXTERNAL_ADDR=${NAT_ROUTER_2_PUBLIC_ADDR}
+    networks:
+      private_network_2:
+        ipv4_address: ${NAT_ROUTER_2_PRIVATE_ADDR}
+      public_internet:
+        ipv4_address: ${NAT_ROUTER_2_PUBLIC_ADDR}
 
   public_codex:
-    build: 
-      context: ./codex
-      args:
-        - CODEX_BINARY=${CODEX_BINARY}
+    build: ./codex
+    environment:
+      - SUBNET=${PUBLIC_SUBNET}
+    volumes:
+      - ./logs/public-codex:/opt/codex/logs
+    healthcheck:
+      test: "curl http://localhost:8080/api/codex/v1/debug/info"
+      interval: 10s
+      timeout: 10s
+      retries: 5
     networks:
       public_internet:
         ipv4_address: ${PUBLIC_CODEX_ADDR}

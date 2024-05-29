@@ -2,9 +2,9 @@
 
 set -ex
 
-iptables-legacy -t nat -A POSTROUTING -s $SUBNET_INTERNAL -o eth1 -j SNAT --to-source $ADDR_EXTERNAL
+iptables-legacy -t nat -A POSTROUTING -s ${INTERNAL_SUBNET} -o eth1 -j SNAT --to-source ${EXTERNAL_ADDR}
 
-#tcpdump -i eth0 -n -w /dump.pcap &
+# tcpdump -i eth0 -n -w /dump.pcap &
+# ulogd -v
 
-#ulogd -v
-sleep 100000
+sleep infinity

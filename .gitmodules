@@ -1,0 +1,3 @@
+[submodule "codex/nim-codex"]
+	path = codex/nim-codex
+	url = git@github.com:codex-storage/nim-codex.git

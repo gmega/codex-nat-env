@@ -1,21 +1,33 @@
 services:
-  # nat_codex_1:
-  #   build: ./codex
-  #   cap_add:
-  #     - NET_ADMIN
-  #   networks:
-  #     private_network_1:
-  #       ipv4_address: ${CODEX_1_PRIVATE_ADDR}
 
-  # nat_router_1:
-  #   build: ./router
-  #   cap_add:
-  #     - NET_ADMIN
-  #   networks:
-  #     private_network_1:
-  #       ipv4_address: ${NAT_ROUTER_1_PRIVATE_ADDR}
-  #     public_internet:
-  #       ipv4_address: ${NAT_ROUTER_1_PUBLIC_ADDR}
+  nat_codex_1:
+    build: ./codex
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - GATEWAY=${NAT_ROUTER_1_PRIVATE_ADDR}
+      - BOOTSTRAP_NODE_ADDR=${PUBLIC_CODEX_ADDR}
+    volumes:
+      - ./logs/nat-codex-1:/opt/codex/logs
+    networks:
+      private_network_1:
+        ipv4_address: ${NAT_CODEX_1_ADDR}
+    depends_on:
+      public_codex:
+        condition: service_healthy
+
+  nat_router_1:
+    build: ./router
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - INTERNAL_SUBNET=${PRIVATE_SUBNET_1}
+      - EXTERNAL_ADDR=${NAT_ROUTER_1_PUBLIC_ADDR}
+    networks:
+      private_network_1:
+        ipv4_address: ${NAT_ROUTER_1_PRIVATE_ADDR}
+      public_internet:
+        ipv4_address: ${NAT_ROUTER_1_PUBLIC_ADDR}
 
   nat_codex_2:
     build: ./codex

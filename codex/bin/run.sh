@@ -1,7 +1,6 @@
 #!/bin/sh
 set -ex
 
-# We
 if [ -n "${GATEWAY}" ]; then
     echo "Set ${GATEWAY} as default gateway on eth0"
     ip route change default via ${GATEWAY} dev eth0
